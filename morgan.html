@@ -1,0 +1,48 @@
+<script>
+  var Morgan = Object.create(null);
+
+  Morgan.register = function(name, callbacks) {
+    callbacks = callbacks || {};
+    var template = document.currentScript.ownerDocument
+      .querySelector('template');
+
+    var proto = Object.create(HTMLElement.prototype);
+    proto.setup = callbacks.setup;
+    proto.el = function(query) {
+      var result = this.shadowRoot.querySelectorAll(query);
+      if (result.length == 1)
+        return result[0];
+      return result;
+    };
+
+    proto.attributeChangedCallback = callbacks.update;
+    proto.attachedCallback = callbacks.attach;
+    proto.deattachedCallback = callbacks.deattach;
+    proto.createdCallback = function() {
+      if (template)
+        this.createShadowRoot()
+          .appendChild(document.importNode(template.content, true));
+      if (this.setup)
+        this.setup();
+    };
+
+    document.registerElement(name, { prototype: proto });
+  };
+
+  Morgan.use = function(name, attributes) {
+    var el = document.createElement(name);
+    if (attributes)
+      for (key in attributes)
+        el.setAttribute(key, attributes[key]);
+    return el;
+  };
+
+  Morgan.load = function(href) {
+    var link = Morgan.use('link', {
+      rel: 'import',
+      href: href,
+      async: ''
+    });
+    document.head.appendChild(link);
+  };
+</script>
