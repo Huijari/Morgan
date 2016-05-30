@@ -14,8 +14,8 @@ var name = 'x-component';
 var options = {
   setup, // Executed when instantiated
   update, // Executed when attributes change
-  attach, // Executed when the elements is attached to DOM
-  deattach // Executed when the elements is deattached to DOM
+  attach, // Executed when the element is attached to DOM
+  detach // Executed when the element is detached to DOM
 };
 Morgan.register(name, options);
 ```

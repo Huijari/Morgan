@@ -17,7 +17,7 @@
 
     proto.attributeChangedCallback = callbacks.update;
     proto.attachedCallback = callbacks.attach;
-    proto.deattachedCallback = callbacks.deattach;
+    proto.detachedCallback = callbacks.detach;
     proto.createdCallback = function() {
       if (template)
         this.createShadowRoot()
