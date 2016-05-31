@@ -1,8 +1,11 @@
 # Morgan
-> Simple boilerplate for WebComponents
+> Lightweight boilerplate for modularization
 
-Library for registering, loading and using custom web components.  
-Under 2kb without minify, without compression.
+Morgan is a tiny library for registering, extending, loading and using custom web components.  
+
+- morgan.html `1,53 KB`
+- morgan.min.html `930 bytes`
+- morgan.min.html.gz `497 bytes`
 
 ## "Install"
 `<link rel="import" href="morgan.html">`
@@ -12,6 +15,7 @@ Under 2kb without minify, without compression.
 ```
 var name = 'x-component';
 var options = {
+  base, // Base element name
   setup, // Executed when instantiated
   update, // Executed when attributes change
   attach, // Executed when the element is attached to DOM
@@ -19,6 +23,7 @@ var options = {
 };
 Morgan.register(name, options);
 ```
+Note that Morgan will associate the first `<template>` with the component, enforcing separated files.
 ### Load
 ```
 var href = '/components/x.html';
@@ -26,12 +31,11 @@ Morgan.load(href);
 ```
 ### Use
 ```
-var element = Morgan.use('input', {
-  type: 'password'
-});
+var element = Morgan.use('x-biometric', { // Element name
+  type: 'password' // Attributes
+}, 'input'); // Base element name
 ```
 ## Todo
-- Inheritance
 - Enchance documentation
 
 ## Meta
