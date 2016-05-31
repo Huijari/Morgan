@@ -1,13 +1,16 @@
 <script>
   var Morgan = Object.create(null);
 
-  Morgan.register = function(name, callbacks) {
-    callbacks = callbacks || {};
+  Morgan.register = function(name, options) {
+    options = options || {};
     var template = document.currentScript.ownerDocument
       .querySelector('template');
 
-    var proto = Object.create(HTMLElement.prototype);
-    proto.setup = callbacks.setup;
+    var baseProto = HTMLElement.prototype;
+    if (options.base)
+      baseProto = Object.getPrototypeOf(document.createElement(options.base));
+    var proto = Object.create(baseProto);
+    proto.setup = options.setup;
     proto.el = function(query) {
       var result = this.shadowRoot.querySelectorAll(query);
       if (result.length == 1)
@@ -15,9 +18,9 @@
       return result;
     };
 
-    proto.attributeChangedCallback = callbacks.update;
-    proto.attachedCallback = callbacks.attach;
-    proto.detachedCallback = callbacks.detach;
+    proto.attributeChangedCallback = options.update;
+    proto.attachedCallback = options.attach;
+    proto.deattachedCallback = options.deattach;
     proto.createdCallback = function() {
       if (template)
         this.createShadowRoot()
@@ -26,11 +29,18 @@
         this.setup();
     };
 
-    document.registerElement(name, { prototype: proto });
+    var spec = {
+      prototype: proto
+    };
+    if (options.base)
+      spec.extends = options.base;
+    document.registerElement(name, spec);
   };
 
-  Morgan.use = function(name, attributes) {
-    var el = document.createElement(name);
+  Morgan.use = function(name, attributes, base) {
+    var el = base ?
+      document.createElement(base, name) :
+      document.createElement(name);
     if (attributes)
       for (key in attributes)
         el.setAttribute(key, attributes[key]);
